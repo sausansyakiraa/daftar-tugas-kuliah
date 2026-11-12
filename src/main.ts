@@ -101,6 +101,7 @@ function renderDaftarTugas(): void {
       const sudahSelesai: boolean = tugas.status === 'Selesai';
       const kelasStatus: string = sudahSelesai ? 'status-done' : 'status-pending';
       const kelasMendesak: string = !sudahSelesai && infoDeadline.mendesak ? 'deadline-urgent' : '';
+      const labelToggle: string = sudahSelesai ? '↩ Tandai Belum' : '✓ Tandai Selesai';
 
       return `
         <article class="task-card ${sudahSelesai ? 'task-completed' : ''}" data-id="${tugas.id}">
@@ -115,10 +116,39 @@ function renderDaftarTugas(): void {
               <span class="deadline-note">(${sudahSelesai ? 'Tuntas' : infoDeadline.keterangan})</span>
             </p>
           </div>
+          <div class="task-actions">
+            <button type="button" class="btn btn-sm btn-toggle" data-action="toggle" data-id="${tugas.id}">
+              ${labelToggle}
+            </button>
+            <button type="button" class="btn btn-sm btn-delete" data-action="delete" data-id="${tugas.id}">
+              Hapus
+            </button>
+          </div>
         </article>
       `;
     })
     .join('');
+}
+
+// Mengubah (toggle) status tugas antara 'Belum Selesai' dan 'Selesai'
+function toggleStatusTugas(id: number): void {
+  daftarTugas = daftarTugas.map((tugas) => {
+    if (tugas.id !== id) return tugas;
+    const statusBaru: Status = tugas.status === 'Selesai' ? 'Belum Selesai' : 'Selesai';
+    return { ...tugas, status: statusBaru };
+  });
+
+  simpanTugasKeStorage(daftarTugas);
+  renderRingkasan();
+  renderDaftarTugas();
+}
+
+// Menghapus tugas berdasarkan id
+function hapusTugas(id: number): void {
+  daftarTugas = daftarTugas.filter((tugas) => tugas.id !== id);
+  simpanTugasKeStorage(daftarTugas);
+  renderRingkasan();
+  renderDaftarTugas();
 }
 
 // Menangani penambahan tugas baru
@@ -154,6 +184,22 @@ function handleTambahTugas(event: SubmitEvent): void {
   renderRingkasan();
   renderDaftarTugas();
 }
+
+// Event delegation untuk tombol aksi pada kartu tugas
+elTaskList?.addEventListener('click', (event: MouseEvent) => {
+  const target = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-action]');
+  if (!target) return;
+
+  const id: number = Number(target.dataset.id);
+  const action: string | undefined = target.dataset.action;
+  if (!id || !action) return;
+
+  if (action === 'toggle') {
+    toggleStatusTugas(id);
+  } else if (action === 'delete') {
+    hapusTugas(id);
+  }
+});
 
 // Inisialisasi event listener form dan filter
 elForm?.addEventListener('submit', handleTambahTugas);
