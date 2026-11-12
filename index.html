@@ -6,8 +6,101 @@
     <title>Daftar Tugas Kuliah</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <!-- Header Aplikasi (diisi nama & versi dari import.meta.env) -->
+      <header class="app-header">
+        <div class="container header-inner">
+          <div class="brand">
+            <span class="brand-badge">PAW Tugas 6</span>
+            <h1 id="env-app-name">Daftar Tugas Kuliah</h1>
+            <p class="subtitle">Pengelola Tugas Perkuliahan Mahasiswa &bull; Versi <span id="env-app-version">1.0.0</span></p>
+          </div>
+          <nav class="nav-tabs" aria-label="Navigasi Utama">
+            <button type="button" id="tab-btn-tugas" class="tab-btn active">Daftar Tugas</button>
+            <button type="button" id="tab-btn-tentang" class="tab-btn">Tentang Proyek</button>
+          </nav>
+        </div>
+      </header>
+
+      <!-- Konten Utama -->
+      <main class="container main-content">
+        <!-- Bagian 1: Pengelola Daftar Tugas -->
+        <section id="view-tugas" class="view-section">
+          <!-- Ringkasan Statistik Tugas -->
+          <div id="summary-container" class="summary-bar" aria-live="polite"></div>
+
+          <div class="layout-grid">
+            <!-- Panel Form Tambah / Edit Tugas -->
+            <aside class="card form-card">
+              <h2 id="form-heading" class="card-title">Tambah Tugas Baru</h2>
+              <form id="task-form" novalidate>
+                <input type="hidden" id="input-id" value="" />
+
+                <div class="form-group">
+                  <label for="input-judul">Judul Tugas <span class="required">*</span></label>
+                  <input
+                    type="text"
+                    id="input-judul"
+                    name="judul"
+                    placeholder="Contoh: Laporan Praktikum Git & Vite"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="input-matkul">Mata Kuliah <span class="required">*</span></label>
+                  <input
+                    type="text"
+                    id="input-matkul"
+                    name="mataKuliah"
+                    placeholder="Contoh: Pengembangan Aplikasi Web"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="input-deadline">Deadline Pengumpulan <span class="required">*</span></label>
+                  <input type="date" id="input-deadline" name="deadline" required />
+                </div>
+
+                <p id="form-error" class="form-error" hidden></p>
+
+                <div class="form-actions">
+                  <button type="submit" id="btn-submit" class="btn btn-primary">Simpan Tugas</button>
+                  <button type="button" id="btn-cancel-edit" class="btn btn-secondary" hidden>Batal Edit</button>
+                </div>
+              </form>
+            </aside>
+
+            <!-- Panel Daftar Tugas Kuliah -->
+            <section class="card list-card">
+              <div class="list-header">
+                <h2 class="card-title">Daftar Tugas Kuliah</h2>
+                <div class="filter-group" role="group" aria-label="Filter status tugas">
+                  <button type="button" class="filter-btn active" data-filter="Semua">Semua</button>
+                  <button type="button" class="filter-btn" data-filter="Belum Selesai">Belum Selesai</button>
+                  <button type="button" class="filter-btn" data-filter="Selesai">Selesai</button>
+                </div>
+              </div>
+
+              <!-- Tempat kartu tugas atau pesan kosong dirender -->
+              <div id="task-list-container" class="task-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <!-- Bagian 2: Halaman Tentang Proyek (Satu halaman tanpa router) -->
+        <section id="view-tentang" class="view-section" hidden>
+          <div id="about-content"></div>
+        </section>
+      </main>
+
+      <footer class="app-footer">
+        <div class="container">
+          <p>Pengembangan Aplikasi Web &mdash; Tugas 6 (Git, npm, TypeScript, Vite)</p>
+        </div>
+      </footer>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
-
