@@ -1,6 +1,7 @@
 import './style.css';
 import type { Status, Task } from './types';
 import {
+  cariById,
   escapeHtml,
   formatDeadline,
   hitungRingkasanTugas,
@@ -16,6 +17,7 @@ const versiAplikasi: string = import.meta.env.VITE_APP_VERSION || '1.0.0';
 // State utama aplikasi menggunakan tipe Array: Task[]
 let daftarTugas: Task[] = muatTugasDariStorage();
 let filterAktif: 'Semua' | Status = 'Semua';
+let idSedangDiedit: number | null = null;
 
 // Mengambil referensi elemen DOM
 const elAppName = document.getElementById('env-app-name');
@@ -23,9 +25,13 @@ const elAppVersion = document.getElementById('env-app-version');
 const elSummary = document.getElementById('summary-container');
 const elTaskList = document.getElementById('task-list-container');
 const elForm = document.getElementById('task-form') as HTMLFormElement | null;
+const elFormHeading = document.getElementById('form-heading');
+const elInputId = document.getElementById('input-id') as HTMLInputElement | null;
 const elInputJudul = document.getElementById('input-judul') as HTMLInputElement | null;
 const elInputMatkul = document.getElementById('input-matkul') as HTMLInputElement | null;
 const elInputDeadline = document.getElementById('input-deadline') as HTMLInputElement | null;
+const elBtnSubmit = document.getElementById('btn-submit') as HTMLButtonElement | null;
+const elBtnCancelEdit = document.getElementById('btn-cancel-edit') as HTMLButtonElement | null;
 const elFormError = document.getElementById('form-error');
 
 // Menampilkan nama dan versi aplikasi di header
@@ -101,6 +107,7 @@ function renderDaftarTugas(): void {
       const sudahSelesai: boolean = tugas.status === 'Selesai';
       const kelasStatus: string = sudahSelesai ? 'status-done' : 'status-pending';
       const kelasMendesak: string = !sudahSelesai && infoDeadline.mendesak ? 'deadline-urgent' : '';
+      const labelToggle: string = sudahSelesai ? '↩ Tandai Belum' : '✓ Tandai Selesai';
 
       return `
         <article class="task-card ${sudahSelesai ? 'task-completed' : ''}" data-id="${tugas.id}">
@@ -115,14 +122,79 @@ function renderDaftarTugas(): void {
               <span class="deadline-note">(${sudahSelesai ? 'Tuntas' : infoDeadline.keterangan})</span>
             </p>
           </div>
+          <div class="task-actions">
+            <button type="button" class="btn btn-sm btn-toggle" data-action="toggle" data-id="${tugas.id}">
+              ${labelToggle}
+            </button>
+            <button type="button" class="btn btn-sm btn-edit" data-action="edit" data-id="${tugas.id}">
+              Edit
+            </button>
+            <button type="button" class="btn btn-sm btn-delete" data-action="delete" data-id="${tugas.id}">
+              Hapus
+            </button>
+          </div>
         </article>
       `;
     })
     .join('');
 }
 
-// Menangani penambahan tugas baru
-function handleTambahTugas(event: SubmitEvent): void {
+// Mereset mode edit pada formulir kembali ke mode tambah tugas
+function resetModeEdit(): void {
+  idSedangDiedit = null;
+  elForm?.reset();
+  if (elInputId) elInputId.value = '';
+  if (elFormHeading) elFormHeading.textContent = 'Tambah Tugas Baru';
+  if (elBtnSubmit) elBtnSubmit.textContent = 'Simpan Tugas';
+  if (elBtnCancelEdit) elBtnCancelEdit.hidden = true;
+  if (elFormError) elFormError.hidden = true;
+}
+
+// Memuat data tugas ke formulir untuk diedit menggunakan fungsi generic cariById<Task>
+function mulaiEditTugas(id: number): void {
+  const tugasDitemukan: Task | undefined = cariById(daftarTugas, id);
+  if (!tugasDitemukan) return;
+
+  idSedangDiedit = tugasDitemukan.id;
+  if (elInputId) elInputId.value = String(tugasDitemukan.id);
+  if (elInputJudul) elInputJudul.value = tugasDitemukan.judul;
+  if (elInputMatkul) elInputMatkul.value = tugasDitemukan.mataKuliah;
+  if (elInputDeadline) elInputDeadline.value = tugasDitemukan.deadline;
+
+  if (elFormHeading) elFormHeading.textContent = 'Edit Tugas Kuliah';
+  if (elBtnSubmit) elBtnSubmit.textContent = 'Simpan Perubahan';
+  if (elBtnCancelEdit) elBtnCancelEdit.hidden = false;
+  if (elFormError) elFormError.hidden = true;
+
+  elInputJudul?.focus();
+}
+
+// Mengubah (toggle) status tugas antara 'Belum Selesai' dan 'Selesai'
+function toggleStatusTugas(id: number): void {
+  daftarTugas = daftarTugas.map((tugas) => {
+    if (tugas.id !== id) return tugas;
+    const statusBaru: Status = tugas.status === 'Selesai' ? 'Belum Selesai' : 'Selesai';
+    return { ...tugas, status: statusBaru };
+  });
+
+  simpanTugasKeStorage(daftarTugas);
+  renderRingkasan();
+  renderDaftarTugas();
+}
+
+// Menghapus tugas berdasarkan id
+function hapusTugas(id: number): void {
+  daftarTugas = daftarTugas.filter((tugas) => tugas.id !== id);
+  if (idSedangDiedit === id) {
+    resetModeEdit();
+  }
+  simpanTugasKeStorage(daftarTugas);
+  renderRingkasan();
+  renderDaftarTugas();
+}
+
+// Menangani penambahan tugas baru maupun penyimpanan hasil edit tugas
+function handleSubmitForm(event: SubmitEvent): void {
   event.preventDefault();
   if (!elInputJudul || !elInputMatkul || !elInputDeadline || !elFormError) return;
 
@@ -138,25 +210,51 @@ function handleTambahTugas(event: SubmitEvent): void {
 
   elFormError.hidden = true;
 
-  // Membuat objek tugas baru sesuai Interface Task
-  const tugasBaru: Task = {
-    id: Date.now(),
-    judul,
-    mataKuliah,
-    deadline,
-    status: 'Belum Selesai',
-  };
+  if (idSedangDiedit !== null) {
+    // Mode Edit: perbarui tugas yang sedang diedit
+    daftarTugas = daftarTugas.map((tugas) =>
+      tugas.id === idSedangDiedit ? { ...tugas, judul, mataKuliah, deadline } : tugas
+    );
+    resetModeEdit();
+  } else {
+    // Mode Tambah: buat objek tugas baru sesuai Interface Task
+    const tugasBaru: Task = {
+      id: Date.now(),
+      judul,
+      mataKuliah,
+      deadline,
+      status: 'Belum Selesai',
+    };
+    daftarTugas = [tugasBaru, ...daftarTugas];
+    elForm?.reset();
+  }
 
-  daftarTugas = [tugasBaru, ...daftarTugas];
   simpanTugasKeStorage(daftarTugas);
-
-  elForm?.reset();
   renderRingkasan();
   renderDaftarTugas();
 }
 
-// Inisialisasi event listener form dan filter
-elForm?.addEventListener('submit', handleTambahTugas);
+// Event delegation untuk tombol aksi pada kartu tugas (toggle, edit, delete)
+elTaskList?.addEventListener('click', (event: MouseEvent) => {
+  const target = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-action]');
+  if (!target) return;
+
+  const id: number = Number(target.dataset.id);
+  const action: string | undefined = target.dataset.action;
+  if (!id || !action) return;
+
+  if (action === 'toggle') {
+    toggleStatusTugas(id);
+  } else if (action === 'edit') {
+    mulaiEditTugas(id);
+  } else if (action === 'delete') {
+    hapusTugas(id);
+  }
+});
+
+// Inisialisasi event listener form, batal edit, dan filter
+elForm?.addEventListener('submit', handleSubmitForm);
+elBtnCancelEdit?.addEventListener('click', resetModeEdit);
 
 document.querySelectorAll<HTMLButtonElement>('.filter-btn').forEach((btn) => {
   btn.addEventListener('click', () => {
