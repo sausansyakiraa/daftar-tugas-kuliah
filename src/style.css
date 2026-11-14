@@ -32,10 +32,11 @@
   padding: 0;
 }
 
-/* Halaman (body): Background --cream, Teks --ink */
+/* Halaman (body): Background flat --cream, Teks --ink */
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--cream);
+  background: var(--cream);
   color: var(--ink);
   line-height: 1.6;
   min-height: 100vh;
@@ -78,9 +79,9 @@ a:hover {
 .app-header {
   background: var(--gradient-header);
   color: var(--cream);
-  padding: 1.35rem 0;
+  padding: 1.25rem 0;
   box-shadow: var(--shadow-header);
-  border-bottom: 3px solid var(--gold);
+  border-bottom: 2px solid var(--gold);
 }
 
 .header-inner {
@@ -117,7 +118,6 @@ a:hover {
   color: var(--cream);
   margin-top: 0.35rem;
   font-weight: 500;
-  opacity: 0.95;
 }
 
 /* Navigasi Tab di Header */
@@ -156,10 +156,17 @@ a:hover {
 }
 
 /* Area Konten Utama */
+main,
 .main-content {
   flex: 1;
-  padding-top: 2.25rem;
-  padding-bottom: 3.5rem;
+  padding: 40px 0;
+}
+
+@media (max-width: 700px) {
+  main,
+  .main-content {
+    padding: 32px 0;
+  }
 }
 
 /* Bar Ringkasan Tugas (Kartu): Background --ivory, Border kiri 5px --crimson */
@@ -169,8 +176,8 @@ a:hover {
   border: 1px solid var(--border);
   border-left: 5px solid var(--crimson);
   border-radius: 12px;
-  padding: 1.25rem;
-  margin-bottom: 1.75rem;
+  padding: 24px;
+  margin-bottom: 24px;
   box-shadow: var(--shadow-card);
 }
 
@@ -248,7 +255,7 @@ a:hover {
 .layout-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.75rem;
+  gap: 24px;
   align-items: start;
 }
 
@@ -259,7 +266,7 @@ a:hover {
   border: 1px solid var(--border);
   border-left: 5px solid var(--crimson);
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 24px;
   box-shadow: var(--shadow-card);
 }
 
@@ -328,8 +335,7 @@ a:hover {
 .form-actions {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  margin-top: 0.25rem;
+  gap: 0.5rem;
 }
 
 /* Tombol Sesuai Pemetaan Warna design.md */
@@ -576,7 +582,7 @@ a:hover {
 .about-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 1.35rem;
+  gap: 24px;
 }
 
 .about-hero {
@@ -609,7 +615,7 @@ a:hover {
 .about-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.35rem;
+  gap: 24px;
 }
 
 .doc-card h3 {
@@ -722,14 +728,21 @@ a:hover {
 }
 
 /* Footer: Background --navy, Teks --cream (Tipis) */
+footer,
 .app-footer {
   background-color: var(--navy);
   color: var(--cream);
-  border-top: 1.5px solid var(--gold);
-  padding: 0.5rem 0;
-  text-align: center;
-  font-size: 0.8rem;
+  border-top: 1px solid var(--gold);
+  padding: 10px 20px;
+  font-size: 12px;
   line-height: 1.4;
+  text-align: center;
+}
+
+footer p,
+.app-footer p {
+  margin: 0;
+  padding: 0;
 }
 
 /* Breakpoint Tablet & Desktop (min-width: 768px) */
@@ -761,7 +774,7 @@ a:hover {
 
   .layout-grid {
     grid-template-columns: 360px 1fr;
-    gap: 1.75rem;
+    gap: 24px;
   }
 
   .list-header {
@@ -784,5 +797,6 @@ a:hover {
 
   .about-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
   }
 }
