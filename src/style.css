@@ -32,25 +32,30 @@
   padding: 0;
 }
 
-/* Halaman (body): Background flat --cream, Teks --ink */
+/* Halaman (body): Layout flex column, background flat --cream */
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: var(--cream);
-  background: var(--cream);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--cream); /* flat, tanpa gradient */
   color: var(--ink);
   line-height: 1.6;
-  min-height: 100vh;
 }
 
 #app {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  background: var(--cream);
+  width: 100%;
 }
 
-.container {
+/* Container khusus header dan footer agar tidak menimpa padding konten utama (main) */
+header .container,
+footer .container {
   width: 100%;
-  max-width: 1120px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -75,8 +80,10 @@ a:hover {
   color: var(--crimson-dark);
 }
 
-/* Header Aplikasi: Background --gradient-header, Teks --cream, Subjudul/versi --gold */
+/* Header Aplikasi: Background --gradient-header, Teks --cream, Subjudul/versi --cream */
+header,
 .app-header {
+  flex-shrink: 0;
   background: var(--gradient-header);
   color: var(--cream);
   padding: 1.25rem 0;
@@ -155,21 +162,36 @@ a:hover {
   box-shadow: var(--shadow-crimson);
 }
 
-/* Area Konten Utama */
+/* Area Konten Utama (Pembungkus Konten: main.container.main-content) */
 main,
 .main-content {
   flex: 1;
-  padding: 40px 0;
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 48px;
+  padding-bottom: 48px;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 @media (max-width: 700px) {
   main,
   .main-content {
-    padding: 32px 0;
+    padding-top: 28px;
+    padding-bottom: 28px;
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 
-/* Bar Ringkasan Tugas (Kartu): Background --ivory, Border kiri 5px --crimson */
+/* Bagian Tampilan (Daftar Tugas dan Tentang Proyek) */
+.view-section {
+  background: transparent;
+  width: 100%;
+}
+
+/* Bar Ringkasan Tugas (Kartu Pertama): Background --ivory, Border kiri 5px --crimson */
 .summary-bar {
   background-color: var(--ivory);
   color: var(--ink);
@@ -177,6 +199,7 @@ main,
   border-left: 5px solid var(--crimson);
   border-radius: 12px;
   padding: 24px;
+  margin-top: 0;
   margin-bottom: 24px;
   box-shadow: var(--shadow-card);
 }
@@ -730,6 +753,7 @@ main,
 /* Footer: Background --navy, Teks --cream (Tipis) */
 footer,
 .app-footer {
+  flex-shrink: 0;
   background-color: var(--navy);
   color: var(--cream);
   border-top: 1px solid var(--gold);
@@ -747,7 +771,8 @@ footer p,
 
 /* Breakpoint Tablet & Desktop (min-width: 768px) */
 @media (min-width: 768px) {
-  .container {
+  header .container,
+  footer .container {
     padding: 0 1.5rem;
   }
 
