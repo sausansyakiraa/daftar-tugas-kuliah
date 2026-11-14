@@ -114,9 +114,10 @@ a:hover {
 
 .subtitle {
   font-size: 0.9rem;
-  color: var(--gold);
-  margin-top: 0.3rem;
+  color: var(--cream);
+  margin-top: 0.35rem;
   font-weight: 500;
+  opacity: 0.95;
 }
 
 /* Navigasi Tab di Header */
@@ -157,8 +158,8 @@ a:hover {
 /* Area Konten Utama */
 .main-content {
   flex: 1;
-  padding-top: 1.5rem;
-  padding-bottom: 2.5rem;
+  padding-top: 2.25rem;
+  padding-bottom: 3.5rem;
 }
 
 /* Bar Ringkasan Tugas (Kartu): Background --ivory, Border kiri 5px --crimson */
@@ -168,8 +169,8 @@ a:hover {
   border: 1px solid var(--border);
   border-left: 5px solid var(--crimson);
   border-radius: 12px;
-  padding: 1.1rem;
-  margin-bottom: 1.35rem;
+  padding: 1.25rem;
+  margin-bottom: 1.75rem;
   box-shadow: var(--shadow-card);
 }
 
@@ -247,7 +248,7 @@ a:hover {
 .layout-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.35rem;
+  gap: 1.75rem;
   align-items: start;
 }
 
@@ -258,7 +259,7 @@ a:hover {
   border: 1px solid var(--border);
   border-left: 5px solid var(--crimson);
   border-radius: 12px;
-  padding: 1.35rem;
+  padding: 1.5rem;
   box-shadow: var(--shadow-card);
 }
 
@@ -327,7 +328,8 @@ a:hover {
 .form-actions {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
 }
 
 /* Tombol Sesuai Pemetaan Warna design.md */
@@ -719,14 +721,15 @@ a:hover {
   margin-bottom: 0;
 }
 
-/* Footer: Background --navy, Teks --cream */
+/* Footer: Background --navy, Teks --cream (Tipis) */
 .app-footer {
   background-color: var(--navy);
   color: var(--cream);
-  border-top: 3px solid var(--gold);
-  padding: 1.1rem 0;
+  border-top: 1.5px solid var(--gold);
+  padding: 0.5rem 0;
   text-align: center;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
 }
 
 /* Breakpoint Tablet & Desktop (min-width: 768px) */
@@ -757,8 +760,8 @@ a:hover {
   }
 
   .layout-grid {
-    grid-template-columns: 350px 1fr;
-    gap: 1.5rem;
+    grid-template-columns: 360px 1fr;
+    gap: 1.75rem;
   }
 
   .list-header {
